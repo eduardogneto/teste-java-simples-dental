@@ -8,12 +8,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.model.profissional.Profissional;
 import com.api.simplesdental.repository.contato.ContatoRepository;
+import com.api.simplesdental.repository.profissional.ProfissionalRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -29,6 +33,9 @@ public class ContatoService {
 
     @Autowired
     private ContatoRepository contatoRepository;
+    
+    @Autowired
+    private ProfissionalRepository profissionalRepository;
     
     @PersistenceContext
     private EntityManager entityManager;
@@ -113,6 +120,13 @@ public class ContatoService {
     }
 
     public Contato save(Contato contato) {
+        Long profissionalId = contato.getProfissional().getId();
+
+        Profissional profissional = profissionalRepository.findById(profissionalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um profissional com o id " + profissionalId));
+
+        contato.setProfissional(profissional);
+
         return contatoRepository.save(contato);
     }
 
