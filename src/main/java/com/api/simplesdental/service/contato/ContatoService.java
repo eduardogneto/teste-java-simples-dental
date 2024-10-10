@@ -120,12 +120,19 @@ public class ContatoService {
     }
 
     public Contato save(Contato contato) {
-        Long profissionalId = contato.getProfissional().getId();
+        Long professionalId = contato.getProfissional().getId();
+        
+        String number = contato.getContato();
 
-        Profissional profissional = profissionalRepository.findById(profissionalId)
-                .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um profissional com o id " + profissionalId));
+        Profissional professional = profissionalRepository.findById(professionalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um profissional com o id " + professionalId));
+        
+        Optional<Contato> existingContato = contatoRepository.findByContato(number);
+        if (existingContato.isPresent()) {
+            throw new ResourceNotFoundException("Já existe um contato com o número informado");
+        }
 
-        contato.setProfissional(profissional);
+        contato.setProfissional(professional);
 
         return contatoRepository.save(contato);
     }
