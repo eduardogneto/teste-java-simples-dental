@@ -138,14 +138,28 @@ public class ContatoService {
     }
 
     public Contato update(Long id, Contato contatoDetails) {
+        String newNumber = contatoDetails.getContato();
+        String newName = contatoDetails.getNome();
+
         Contato contact = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com id " + id));
 
-        contact.setNome(contatoDetails.getNome());
-        contact.setContato(contatoDetails.getContato());
+        if (newNumber != null && !newNumber.trim().isEmpty() && !newNumber.equals(contact.getContato())) {
+            contatoRepository.findByContato(newNumber).ifPresent(existingContato -> {
+                if (!existingContato.getId().equals(id)) {
+                    throw new ResourceNotFoundException("Já existe um contato com o número informado");
+                }
+            });
+            contact.setContato(newNumber);
+        }
+
+        if (newName != null && !newName.trim().isEmpty() && !newName.equals(contact.getNome())) {
+            contact.setNome(newName);
+        }
 
         return contatoRepository.save(contact);
     }
+
     
     public boolean existsByProfissionalId(Long profissionalId) {
         String jpql = "SELECT COUNT(c) FROM Contato c WHERE c.profissional.id = :profissionalId";
