@@ -2,15 +2,15 @@ package com.api.simplesdental.service.profissional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.api.simplesdental.dto.profissional.ProfissionalDTO;
+import com.api.simplesdental.dto.profissional.ProfissionalDTOFactory;
 import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
 import com.api.simplesdental.enums.profissional.Cargo;
 import com.api.simplesdental.exception.ResourceNotFoundException;
@@ -41,7 +41,7 @@ public class ProfissionalService {
 
     private static final List<String> validFields = Arrays.asList("id", "cargo", "nascimento", "createdDate", "nome");
 
-    public List<Object> findAll(String query, List<String> fields) {
+    public List<ProfissionalDTO> findAll(String query, List<String> fields) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         List<String> filteredFields = fields != null 
@@ -81,27 +81,11 @@ public class ProfissionalService {
         TypedQuery<Object[]> dynamicQuery = entityManager.createQuery(cqDynamic);
         List<Object[]> resultList = dynamicQuery.getResultList();
 
-        return resultList.stream().map(result -> {
-            Map<String, Object> dtoMap = new HashMap<>();
-            
-            if (finalFilteredFields.contains("id")) {
-                dtoMap.put("id", result[finalFilteredFields.indexOf("id")]);
-            }
-            if (finalFilteredFields.contains("nome")) {
-                dtoMap.put("nome", result[finalFilteredFields.indexOf("nome")]);
-            }
-            if (finalFilteredFields.contains("nascimento")) {
-            	dtoMap.put("nascimento", result[finalFilteredFields.indexOf("nascimento")]);
-            }
-            if (finalFilteredFields.contains("createdDate")) {
-                dtoMap.put("createdDate", result[finalFilteredFields.indexOf("createdDate")]);
-            }
-            if (finalFilteredFields.contains("cargo")) {
-                dtoMap.put("cargo", result[finalFilteredFields.indexOf("cargo")]);
-            }
-            return dtoMap;
-        }).collect(Collectors.toList());
+        return resultList.stream()
+                .map(result -> ProfissionalDTOFactory.createProfissionalDTO(result, finalFilteredFields))
+                .collect(Collectors.toList());
     }
+
 
     public Optional<Profissional> findById(Long id) {
         return profissionalRepository.findById(id);

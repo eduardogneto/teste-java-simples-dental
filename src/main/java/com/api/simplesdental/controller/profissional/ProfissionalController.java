@@ -3,7 +3,6 @@ package com.api.simplesdental.controller.profissional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.simplesdental.dto.profissional.ProfissionalDTO;
 import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.profissional.Profissional;
-import com.api.simplesdental.service.contato.ContatoService;
 import com.api.simplesdental.service.profissional.ProfissionalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,17 +30,15 @@ public class ProfissionalController {
     @Autowired
     private ProfissionalService profissionalService;
     
-    @Autowired
-    private ContatoService contatoService;
-
     @GetMapping
-    @Operation(summary = "Lista de contatos com filtros opcionais passando parametros")
-    public ResponseEntity<List<Object>> getAllProfissionais(
+    @Operation(summary = "Lista de contatos com filtros opcionais passando parâmetros")
+    public ResponseEntity<List<ProfissionalDTO>> getAllProfissionais(
             @RequestParam(value = "q", required = false) String query,
             @RequestParam(value = "fields", required = false) List<String> fields) {
-        List<Object> professional = profissionalService.findAll(query, fields);
+        List<ProfissionalDTO> professional = profissionalService.findAll(query, fields);
         return ResponseEntity.ok(professional);
     }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Obter profissional por id de parametro")
