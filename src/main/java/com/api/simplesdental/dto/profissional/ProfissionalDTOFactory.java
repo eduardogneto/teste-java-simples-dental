@@ -8,7 +8,7 @@ import com.api.simplesdental.enums.profissional.Cargo;
 import com.api.simplesdental.model.profissional.Profissional;
 
 public class ProfissionalDTOFactory {
-    public static ProfissionalDTO createProfissionalDTO(Object[] result, List<String> fields) {
+    public static ProfissionalDTO createProfessionalDTO(Object[] result, List<String> fields) {
         ProfissionalDTO.ProfissionalDTOBuilder builder = ProfissionalDTO.builder();
 
         int index = 0;
@@ -31,29 +31,29 @@ public class ProfissionalDTOFactory {
         return builder.build();
     }
     
-    public static ProfissionalDTO createProfissionalDTO(Profissional profissional, List<String> fields) {
+    public static ProfissionalDTO createProfessionalDTO(Profissional professional, List<String> fields) {
         ProfissionalDTO.ProfissionalDTOBuilder builder = ProfissionalDTO.builder();
 
         if (fields.contains("id")) {
-            builder.id(profissional.getId());
+            builder.id(professional.getId());
         }
         if (fields.contains("nome")) {
-            builder.nome(profissional.getNome());
+            builder.nome(professional.getNome());
         }
         if (fields.contains("cargo")) {
-            builder.cargo(profissional.getCargo());
+            builder.cargo(professional.getCargo());
         }
         if (fields.contains("nascimento")) {
-            builder.nascimento(profissional.getNascimento());
+            builder.nascimento(professional.getNascimento());
         }
         if (fields.contains("createdDate")) {
-            builder.createdDate(profissional.getCreatedDate());
+            builder.createdDate(professional.getCreatedDate());
         }
 
         return builder.build();
     }
     
-    public static ProfissionalDTO createFromDTO(Profissional profissional) {
+    public static ProfissionalDTO createContactFromDTO(Profissional profissional) {
         if (profissional == null) {
             return null;
         }
@@ -68,5 +68,20 @@ public class ProfissionalDTOFactory {
 
         return builder.build();
     }
+    
+    public static ProfissionalDTO createProfessionalFromDTO(Profissional profissional) {
+        if (profissional == null) {
+            return null;
+        }
+
+        return ProfissionalDTO.builder()
+                .id(profissional.getId())
+                .nome(profissional.getNome())
+                .cargo(profissional.getCargo())
+                .nascimento(profissional.getNascimento())
+                .createdDate(profissional.getCreatedDate())
+                .build();
+    }
+    
 }
 

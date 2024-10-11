@@ -10,7 +10,7 @@ import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.model.profissional.Profissional;
 
 public class ContatoDTOFactory {
-    public static ContatoDTO createContatoDTO(Object[] result, List<String> fields) {
+    public static ContatoDTO createContactDTO(Object[] result, List<String> fields) {
         ContatoDTO.ContatoDTOBuilder builder = ContatoDTO.builder();
 
         if (fields.contains("id")) {
@@ -26,33 +26,33 @@ public class ContatoDTOFactory {
             builder.createdDate((LocalDateTime) result[fields.indexOf("createdDate")]);
         }
         if (fields.contains("profissional")) {
-            Profissional profissional = (Profissional) result[fields.indexOf("profissional")];
-            if (profissional != null) {
-                ProfissionalDTO profissionalDTO = ProfissionalDTOFactory.createProfissionalDTO(
-                    profissional, List.of("id", "nome", "cargo", "nascimento", "createdDate")
+            Profissional professional = (Profissional) result[fields.indexOf("profissional")];
+            if (professional != null) {
+                ProfissionalDTO professionalDTO = ProfissionalDTOFactory.createProfessionalDTO(
+                		professional, List.of("id", "nome", "cargo", "nascimento", "createdDate")
                 );
-                builder.profissional(profissionalDTO);
+                builder.profissional(professionalDTO);
             }
         }
 
         return builder.build();
     }
     
-    public static ContatoDTO createFromDTO(Contato contato) {
-        if (contato == null) {
+    public static ContatoDTO createFromDTO(Contato contact) {
+        if (contact == null) {
             return null;
         }
 
         ContatoDTO.ContatoDTOBuilder builder = ContatoDTO.builder();
 
-        builder.id(contato.getId());
-        builder.nome(contato.getNome());
-        builder.contato(contato.getContato());
-        builder.createdDate(contato.getCreatedDate());
+        builder.id(contact.getId());
+        builder.nome(contact.getNome());
+        builder.contato(contact.getContato());
+        builder.createdDate(contact.getCreatedDate());
 
-        if (contato.getProfissional() != null) {
-            ProfissionalDTO profissionalDTO = ProfissionalDTOFactory.createFromDTO(contato.getProfissional());
-            builder.profissional(profissionalDTO);
+        if (contact.getProfissional() != null) {
+            ProfissionalDTO professionalDTO = ProfissionalDTOFactory.createContactFromDTO(contact.getProfissional());
+            builder.profissional(professionalDTO);
         }
 
         return builder.build();

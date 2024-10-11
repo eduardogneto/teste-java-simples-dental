@@ -80,7 +80,7 @@ public class ContatoService {
         List<Object[]> resultList = dynamicQuery.getResultList();
 
         return resultList.stream()
-                .map(result -> ContatoDTOFactory.createContatoDTO(result, finalFilteredFields))
+                .map(result -> ContatoDTOFactory.createContactDTO(result, finalFilteredFields))
                 .collect(Collectors.toList());
     }
 
@@ -91,34 +91,34 @@ public class ContatoService {
         return contatoRepository.findById(id);
     }
 
-    public Contato save(Contato contato) {
-        Long professionalId = contato.getProfissional().getId();
+    public Contato save(Contato contact) {
+        Long professionalId = contact.getProfissional().getId();
         
-        String number = contato.getContato();
+        String number = contact.getContato();
 
         Profissional professional = profissionalRepository.findById(professionalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um profissional com o id " + professionalId));
         
-        Optional<Contato> existingContato = contatoRepository.findByContato(number);
-        if (existingContato.isPresent()) {
+        Optional<Contato> existingContact = contatoRepository.findByContato(number);
+        if (existingContact.isPresent()) {
             throw new ResourceNotFoundException("Já existe um contato com o número informado");
         }
 
-        contato.setProfissional(professional);
+        contact.setProfissional(professional);
 
-        return contatoRepository.save(contato);
+        return contatoRepository.save(contact);
     }
 
-    public Contato update(Long id, Contato contatoDetails) {
-        String newNumber = contatoDetails.getContato();
-        String newName = contatoDetails.getNome();
+    public Contato update(Long id, Contato contactDetails) {
+        String newNumber = contactDetails.getContato();
+        String newName = contactDetails.getNome();
 
         Contato contact = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com id " + id));
 
         if (newNumber != null && !newNumber.trim().isEmpty() && !newNumber.equals(contact.getContato())) {
-            contatoRepository.findByContato(newNumber).ifPresent(existingContato -> {
-                if (!existingContato.getId().equals(id)) {
+            contatoRepository.findByContato(newNumber).ifPresent(existingContact -> {
+                if (!existingContact.getId().equals(id)) {
                     throw new ResourceNotFoundException("Já existe um contato com o número informado");
                 }
             });
@@ -142,9 +142,9 @@ public class ContatoService {
     }
 
     public void delete(Long id) {
-        Contato contato = contatoRepository.findById(id)
+        Contato contact = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com id " + id));
 
-        contatoRepository.delete(contato);
+        contatoRepository.delete(contact);
     }
 }

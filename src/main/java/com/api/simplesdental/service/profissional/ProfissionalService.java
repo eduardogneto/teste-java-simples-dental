@@ -82,7 +82,7 @@ public class ProfissionalService {
         List<Object[]> resultList = dynamicQuery.getResultList();
 
         return resultList.stream()
-                .map(result -> ProfissionalDTOFactory.createProfissionalDTO(result, finalFilteredFields))
+                .map(result -> ProfissionalDTOFactory.createProfessionalDTO(result, finalFilteredFields))
                 .collect(Collectors.toList());
     }
 

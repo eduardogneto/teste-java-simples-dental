@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.simplesdental.dto.profissional.ProfissionalDTO;
+import com.api.simplesdental.dto.profissional.ProfissionalDTOFactory;
 import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.profissional.Profissional;
@@ -32,7 +33,7 @@ public class ProfissionalController {
     
     @GetMapping
     @Operation(summary = "Lista de contatos com filtros opcionais passando parâmetros")
-    public ResponseEntity<List<ProfissionalDTO>> getAllProfissionais(
+    public ResponseEntity<List<ProfissionalDTO>> getAllProfessionals(
             @RequestParam(value = "q", required = false) String query,
             @RequestParam(value = "fields", required = false) List<String> fields) {
         List<ProfissionalDTO> professional = profissionalService.findAll(query, fields);
@@ -41,30 +42,32 @@ public class ProfissionalController {
 
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obter profissional por id de parametro")
-    public ResponseEntity<Profissional> getProfissionalById(@PathVariable Long id) {
+    @Operation(summary = "Obter profissional por id de parâmetro")
+    public ResponseEntity<ProfissionalDTO> getProfessionalById(@PathVariable Long id) {
         Profissional professional = profissionalService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado com id " + id));
-        return ResponseEntity.ok(professional);
+        ProfissionalDTO professionalDTO = ProfissionalDTOFactory.createProfessionalFromDTO(professional);
+        return ResponseEntity.ok(professionalDTO);
     }
+
 
     @PostMapping
     @Operation(summary = "Cadastrar novo profissional")
-    public ResponseEntity<String> createProfissional(@RequestBody Profissional profissional) {
-        Profissional save = profissionalService.save(profissional);
+    public ResponseEntity<String> createProfessional(@RequestBody Profissional professional) {
+        Profissional save = profissionalService.save(professional);
         return ResponseEntity.ok("Sucesso! profissional com id " + save.getId() + " cadastrado");
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar profissional existente utilizando o id")
-    public ResponseEntity<String> updateProfissional(@PathVariable Long id, @Valid @RequestBody ProfissionalUpdateDTO profissionalDTO) {
-        profissionalService.update(id, profissionalDTO);
+    public ResponseEntity<String> updateProfessional(@PathVariable Long id, @Valid @RequestBody ProfissionalUpdateDTO professionalDTO) {
+        profissionalService.update(id, professionalDTO);
         return ResponseEntity.ok("Sucesso! cadastrado alterado");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Exclusão de profissional por id, com validação se o mesmo tem contatos vinculados")
-    public ResponseEntity<String> deleteProfissional(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProfessional(@PathVariable Long id) {
         profissionalService.delete(id);
         return ResponseEntity.ok("Sucesso! Profissional excluído.");
     }

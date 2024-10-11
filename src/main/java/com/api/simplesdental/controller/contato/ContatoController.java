@@ -31,7 +31,7 @@ public class ContatoController {
 
     @GetMapping
     @Operation(summary = "Lista de contatos com filtros opcionais por parâmetro")
-    public ResponseEntity<List<ContatoDTO>> getAllContatos(
+    public ResponseEntity<List<ContatoDTO>> getAllContacts(
             @RequestParam(value = "q", required = false) String query,
             @RequestParam(value = "fields", required = false) List<String> fields) {
         List<ContatoDTO> contacts = contatoService.findAll(query, fields);
@@ -42,31 +42,31 @@ public class ContatoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar contato por ID de parâmetro")
-    public ResponseEntity<ContatoDTO> getContatoById(@PathVariable Long id) {
-        Contato contato = contatoService.findById(id)
+    public ResponseEntity<ContatoDTO> getContactById(@PathVariable Long id) {
+        Contato contact = contatoService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com id " + id));
-        ContatoDTO contatoDTO = ContatoDTOFactory.createFromDTO(contato);
-        return ResponseEntity.ok(contatoDTO);
+        ContatoDTO contactDTO = ContatoDTOFactory.createFromDTO(contact);
+        return ResponseEntity.ok(contactDTO);
     }
 
 
     @PostMapping
     @Operation(summary = "Cadastrar novo contato")
-    public ResponseEntity<String> createContato(@RequestBody Contato contato) {
-        Contato save = contatoService.save(contato);
+    public ResponseEntity<String> createContact(@RequestBody Contato contact) {
+        Contato save = contatoService.save(contact);
         return ResponseEntity.ok("Sucesso contato com id " + save.getId() + " cadastrado");
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar contato existente utilizando id como parametro")
-    public ResponseEntity<String> updateContato(@PathVariable Long id, @RequestBody Contato contatoDetails) {
-        contatoService.update(id, contatoDetails);
+    public ResponseEntity<String> updateContact(@PathVariable Long id, @RequestBody Contato contactDetails) {
+        contatoService.update(id, contactDetails);
         return ResponseEntity.ok("Sucesso cadastrado alterado");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Exclusão de contato por id")
-    public ResponseEntity<String> deleteContato(@PathVariable Long id) {
+    public ResponseEntity<String> deleteContact(@PathVariable Long id) {
         contatoService.delete(id);
         return ResponseEntity.ok("Sucesso contato excluído");
     }
