@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.profissional.Profissional;
 import com.api.simplesdental.service.contato.ContatoService;
 import com.api.simplesdental.service.profissional.ProfissionalService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/profissionais")
@@ -58,20 +60,16 @@ public class ProfissionalController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar profissional existente utilizando o id")
-    public ResponseEntity<String> updateProfissional(@PathVariable Long id, @RequestBody Profissional profissionalDetails) {
-        profissionalService.update(id, profissionalDetails);
+    public ResponseEntity<String> updateProfissional(@PathVariable Long id, @Valid @RequestBody ProfissionalUpdateDTO profissionalDTO) {
+        profissionalService.update(id, profissionalDTO);
         return ResponseEntity.ok("Sucesso! cadastrado alterado");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Exclusão de profissional por id, com validação se o mesmo tem contatos vinculados")
     public ResponseEntity<String> deleteProfissional(@PathVariable Long id) {
-        if (contatoService.existsByProfissionalId(id)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Não é possível excluir o profissional, pois ele possui contatos vinculados.");
-        }
-
         profissionalService.delete(id);
         return ResponseEntity.ok("Sucesso! Profissional excluído.");
     }
+
 }

@@ -1,5 +1,6 @@
 package com.api.simplesdental.service.profissional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +11,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
+import com.api.simplesdental.enums.profissional.Cargo;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.profissional.Profissional;
 import com.api.simplesdental.repository.profissional.ProfissionalRepository;
+import com.api.simplesdental.service.contato.ContatoService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,6 +32,9 @@ public class ProfissionalService {
 
     @Autowired
     private ProfissionalRepository profissionalRepository;
+    
+    @Autowired
+    private ContatoService contatoService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -104,20 +111,35 @@ public class ProfissionalService {
         return profissionalRepository.save(profissional);
     }
 
-    public Profissional update(Long id, Profissional profissionalDetails) {
+    public Profissional update(Long id, ProfissionalUpdateDTO profissionalDTO) {
         Profissional profissional = profissionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado com id " + id));
+        
+        LocalDate newBirth = profissionalDTO.getNascimento();
+        String newName = profissionalDTO.getNome();
+        Cargo newRole = profissionalDTO.getCargo();
 
-        profissional.setNome(profissionalDetails.getNome());
-        profissional.setCargo(profissionalDetails.getCargo());
-        profissional.setNascimento(profissionalDetails.getNascimento());
-
+        if (newName != null && !newName.trim().isEmpty() && !newName.equals(profissional.getNome())) {
+            profissional.setNome(newName);
+        }
+        if (newRole != null && (newRole != profissional.getCargo())) {
+            profissional.setCargo(newRole);
+        }
+        if (newBirth != null && (newBirth != profissional.getNascimento())) {
+            profissional.setNascimento(newBirth);
+        }
+        
         return profissionalRepository.save(profissional);
     }
+
 
     public void delete(Long id) {
         Profissional profissional = profissionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado com id " + id));
+        
+        if (contatoService.existsByProfissionalId(id)) {
+            throw new ResourceNotFoundException("Não é possível excluir o profissional, pois ele possui contatos vinculados.");
+        }
 
         profissionalRepository.delete(profissional);
     }
