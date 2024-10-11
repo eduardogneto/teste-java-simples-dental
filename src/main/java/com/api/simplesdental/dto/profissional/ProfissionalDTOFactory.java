@@ -11,7 +11,6 @@ public class ProfissionalDTOFactory {
     public static ProfissionalDTO createProfessionalDTO(Object[] result, List<String> fields) {
         ProfissionalDTO.ProfissionalDTOBuilder builder = ProfissionalDTO.builder();
 
-        int index = 0;
         if (fields.contains("id")) {
             builder.id((Long) result[fields.indexOf("id")]);
         }
