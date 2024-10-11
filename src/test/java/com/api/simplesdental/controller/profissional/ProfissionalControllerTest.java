@@ -29,6 +29,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.api.simplesdental.dto.profissional.ProfissionalDTO;
+import com.api.simplesdental.dto.profissional.ProfissionalUpdateDTO;
 import com.api.simplesdental.enums.profissional.Cargo;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.profissional.Profissional;
@@ -127,7 +129,7 @@ public class ProfissionalControllerTest {
         profissionalAtualizado.setNascimento(LocalDate.of(2002, 5, 15));
         profissionalAtualizado.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
 
-        when(profissionalService.update(eq(1L), any(Profissional.class))).thenReturn(profissionalAtualizado);
+        when(profissionalService.update(eq(1L), any(ProfissionalUpdateDTO.class))).thenReturn(profissionalAtualizado);
 
         String jsonBody = "{\"nome\":\"Carlos Silva\",\"cargo\":\"TESTER\",\"nascimento\":\"2002-05-15\"}";
 
@@ -141,7 +143,7 @@ public class ProfissionalControllerTest {
     @Test
     public void testUpdateProfissional_NotFound() throws Exception {
         doThrow(new ResourceNotFoundException("Profissional não encontrado com id 1"))
-                .when(profissionalService).update(eq(1L), any(Profissional.class));
+                .when(profissionalService).update(eq(1L), any(ProfissionalUpdateDTO.class));
 
         String jsonBody = "{\"nome\":\"Carlos Silva\"}";
 
@@ -153,17 +155,17 @@ public class ProfissionalControllerTest {
 
     @Test
     public void testGetAllProfissionais_Success() throws Exception {
-        List<Object> profissionais = Arrays.asList(
-                new HashMap<String, Object>() {{
-                    put("id", 1L);
-                    put("nome", "Eduardo Neto");
-                    put("cargo", "DESENVOLVEDOR");
-                }},
-                new HashMap<String, Object>() {{
-                    put("id", 2L);
-                    put("nome", "Maria Souza");
-                    put("cargo", "SUPORTE");
-                }}
+        List<ProfissionalDTO> profissionais = Arrays.asList(
+                ProfissionalDTO.builder()
+                        .id(1L)
+                        .nome("Eduardo Neto")
+                        .cargo(Cargo.DESENVOLVEDOR)
+                        .build(),
+                ProfissionalDTO.builder()
+                        .id(2L)
+                        .nome("Maria Souza")
+                        .cargo(Cargo.SUPORTE)
+                        .build()
         );
 
         when(profissionalService.findAll(null, null)).thenReturn(profissionais);
@@ -173,22 +175,24 @@ public class ProfissionalControllerTest {
                 .andExpect(content().json("[{\"id\":1,\"nome\":\"Eduardo Neto\",\"cargo\":\"DESENVOLVEDOR\"},{\"id\":2,\"nome\":\"Maria Souza\",\"cargo\":\"SUPORTE\"}]"));
     }
 
+
     @Test
     public void testGetAllProfissionais_WithFilters() throws Exception {
-        List<Object> profissionais = Arrays.asList(
-                new HashMap<String, Object>() {{
-                    put("id", 1L);
-                    put("nome", "Eduardo Neto");
-                }}
+        List<ProfissionalDTO> profissionais = Arrays.asList(
+            ProfissionalDTO.builder()
+                .id(1L)
+                .nome("Eduardo Neto")
+                .build()
         );
 
         when(profissionalService.findAll("Eduardo", Arrays.asList("id", "nome"))).thenReturn(profissionais);
 
         mockMvc.perform(get("/profissionais")
-                        .param("q", "Eduardo")
-                        .param("fields", "id")
-                        .param("fields", "nome"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[{\"id\":1,\"nome\":\"Eduardo Neto\"}]"));
+                .param("q", "Eduardo")
+                .param("fields", "id")
+                .param("fields", "nome"))
+            .andExpect(status().isOk())
+            .andExpect(content().json("[{\"id\":1,\"nome\":\"Eduardo Neto\"}]"));
     }
+
 }
