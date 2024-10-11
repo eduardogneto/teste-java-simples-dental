@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.api.simplesdental.enums.profissional.Cargo;
+import com.api.simplesdental.model.profissional.Profissional;
 
 public class ProfissionalDTOFactory {
     public static ProfissionalDTO createProfissionalDTO(Object[] result, List<String> fields) {
@@ -25,6 +26,28 @@ public class ProfissionalDTOFactory {
         }
         if (fields.contains("createdDate")) {
             builder.createdDate((LocalDateTime) result[fields.indexOf("createdDate")]);
+        }
+
+        return builder.build();
+    }
+    
+    public static ProfissionalDTO createProfissionalDTO(Profissional profissional, List<String> fields) {
+        ProfissionalDTO.ProfissionalDTOBuilder builder = ProfissionalDTO.builder();
+
+        if (fields.contains("id")) {
+            builder.id(profissional.getId());
+        }
+        if (fields.contains("nome")) {
+            builder.nome(profissional.getNome());
+        }
+        if (fields.contains("cargo")) {
+            builder.cargo(profissional.getCargo());
+        }
+        if (fields.contains("nascimento")) {
+            builder.nascimento(profissional.getNascimento());
+        }
+        if (fields.contains("createdDate")) {
+            builder.createdDate(profissional.getCreatedDate());
         }
 
         return builder.build();

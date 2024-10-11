@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.simplesdental.dto.contato.ContatoDTO;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.service.contato.ContatoService;
@@ -28,13 +29,14 @@ public class ContatoController {
     private ContatoService contatoService;
 
     @GetMapping
-    @Operation(summary = "Lista de contatos com filtros opcionais por parametro")
-    public ResponseEntity<List<Object>> getAllContatos(
+    @Operation(summary = "Lista de contatos com filtros opcionais por parâmetro")
+    public ResponseEntity<List<ContatoDTO>> getAllContatos(
             @RequestParam(value = "q", required = false) String query,
             @RequestParam(value = "fields", required = false) List<String> fields) {
-        List<Object> contacts = contatoService.findAll(query, fields);
+        List<ContatoDTO> contacts = contatoService.findAll(query, fields);
         return ResponseEntity.ok(contacts);
     }
+
 
 
     @GetMapping("/{id}")

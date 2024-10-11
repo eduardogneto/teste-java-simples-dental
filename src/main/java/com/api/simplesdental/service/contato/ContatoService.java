@@ -1,18 +1,15 @@
 package com.api.simplesdental.service.contato;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.api.simplesdental.dto.contato.ContatoDTO;
+import com.api.simplesdental.dto.contato.ContatoDTOFactory;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.model.profissional.Profissional;
@@ -42,7 +39,7 @@ public class ContatoService {
     
     private static final List<String> validFields = Arrays.asList("id", "nome", "contato", "createdDate", "profissional");
 
-    public List<Object> findAll(String query, List<String> fields) {
+    public List<ContatoDTO> findAll(String query, List<String> fields) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         List<String> filteredFields = fields != null 
@@ -82,36 +79,11 @@ public class ContatoService {
         TypedQuery<Object[]> dynamicQuery = entityManager.createQuery(cqDynamic);
         List<Object[]> resultList = dynamicQuery.getResultList();
 
-        return resultList.stream().map(result -> {
-            Map<String, Object> dtoMap = new HashMap<>();
-            
-            if (finalFilteredFields.contains("id")) {
-                dtoMap.put("id", result[finalFilteredFields.indexOf("id")]);
-            }
-            if (finalFilteredFields.contains("nome")) {
-                dtoMap.put("nome", result[finalFilteredFields.indexOf("nome")]);
-            }
-            if (finalFilteredFields.contains("contato")) {
-            	dtoMap.put("contato", result[finalFilteredFields.indexOf("contato")]);
-            }
-            if (finalFilteredFields.contains("createdDate")) {
-                dtoMap.put("createdDate", result[finalFilteredFields.indexOf("createdDate")]);
-            }
-            if (finalFilteredFields.contains("profissional")) {
-                Profissional professional = (Profissional) result[finalFilteredFields.indexOf("profissional")];
-                if (professional != null) {
-                    Map<String, Object> professionalMap = new HashMap<>();
-                    professionalMap.put("id", professional.getId());
-                    professionalMap.put("nome", professional.getNome());
-                    professionalMap.put("cargo", professional.getCargo());
-                    professionalMap.put("nascimento", professional.getNascimento());
-                    professionalMap.put("createdDate", professional.getCreatedDate());
-                    dtoMap.put("profissional", professionalMap);
-                }
-            }
-            return dtoMap;
-        }).collect(Collectors.toList());
+        return resultList.stream()
+                .map(result -> ContatoDTOFactory.createContatoDTO(result, finalFilteredFields))
+                .collect(Collectors.toList());
     }
+
 
 
 
