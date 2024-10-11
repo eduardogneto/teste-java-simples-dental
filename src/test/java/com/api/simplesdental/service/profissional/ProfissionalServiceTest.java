@@ -130,13 +130,13 @@ public class ProfissionalServiceTest {
         profissional.setNome("Eduardo Neto");
 
         when(profissionalRepository.findById(1L)).thenReturn(Optional.of(profissional));
-        when(contatoService.existsByProfissionalId(1L)).thenReturn(false);
+        when(contatoService.existsByProfessionalId(1L)).thenReturn(false);
         doNothing().when(profissionalRepository).delete(profissional);
 
         profissionalService.delete(1L);
 
         verify(profissionalRepository, times(1)).delete(profissional);
-        verify(contatoService, times(1)).existsByProfissionalId(1L);
+        verify(contatoService, times(1)).existsByProfessionalId(1L);
     }
 
 

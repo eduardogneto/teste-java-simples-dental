@@ -121,7 +121,7 @@ public class ProfissionalService {
         Profissional profissional = profissionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado com id " + id));
         
-        if (contatoService.existsByProfissionalId(id)) {
+        if (contatoService.existsByProfessionalId(id)) {
             throw new ResourceNotFoundException("Não é possível excluir o profissional, pois ele possui contatos vinculados.");
         }
 

@@ -133,10 +133,10 @@ public class ContatoService {
     }
 
     
-    public boolean existsByProfissionalId(Long profissionalId) {
+    public boolean existsByProfessionalId(Long professionalId) {
         String jpql = "SELECT COUNT(c) FROM Contato c WHERE c.profissional.id = :profissionalId";
         TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
-        query.setParameter("profissionalId", profissionalId);
+        query.setParameter("profissionalId", professionalId);
         Long count = query.getSingleResult();
         return count > 0; 
     }

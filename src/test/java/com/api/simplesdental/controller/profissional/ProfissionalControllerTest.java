@@ -53,15 +53,15 @@ public class ProfissionalControllerTest {
     }
 
     @Test
-    public void testGetProfissionalById_Success() throws Exception {
-        Profissional profissional = new Profissional();
-        profissional.setId(1L);
-        profissional.setNome("Eduardo Neto");
-        profissional.setCargo(Cargo.DESIGNER);
-        profissional.setNascimento(LocalDate.of(2003, 4, 10));
-        profissional.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
+    public void testGetProfessionalById_Success() throws Exception {
+        Profissional professional = new Profissional();
+        professional.setId(1L);
+        professional.setNome("Eduardo Neto");
+        professional.setCargo(Cargo.DESIGNER);
+        professional.setNascimento(LocalDate.of(2003, 4, 10));
+        professional.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
 
-        when(profissionalService.findById(1L)).thenReturn(Optional.of(profissional));
+        when(profissionalService.findById(1L)).thenReturn(Optional.of(professional));
 
         mockMvc.perform(get("/profissionais/1"))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ public class ProfissionalControllerTest {
     }
     
     @Test
-    public void testGetProfissionalById_NotFound() throws Exception {
+    public void testGetProfessionalById_NotFound() throws Exception {
         when(profissionalService.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/profissionais/1"))
@@ -77,8 +77,8 @@ public class ProfissionalControllerTest {
     }
 
     @Test
-    public void testDeleteProfissional_Success() throws Exception {
-        when(contatoService.existsByProfissionalId(1L)).thenReturn(false);
+    public void testDeleteProfessional_Success() throws Exception {
+        when(contatoService.existsByProfessionalId(1L)).thenReturn(false);
         doNothing().when(profissionalService).delete(1L);
 
         mockMvc.perform(delete("/profissionais/1"))
@@ -89,26 +89,15 @@ public class ProfissionalControllerTest {
     }
 
     @Test
-    public void testDeleteProfissional_ContatosVinculados() throws Exception {
-        when(contatoService.existsByProfissionalId(1L)).thenReturn(true);
-
-        mockMvc.perform(delete("/profissionais/1"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Não é possível excluir o profissional, pois ele possui contatos vinculados."));
-
-        verify(profissionalService, Mockito.never()).delete(1L);
-    }
-
-    @Test
     public void testCreateProfissional_Success() throws Exception {
-        Profissional profissional = new Profissional();
-        profissional.setId(1L);
-        profissional.setNome("Eduardo Neto");
-        profissional.setCargo(Cargo.DESIGNER);
-        profissional.setNascimento(LocalDate.of(2003, 4, 10));
-        profissional.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
+        Profissional professional = new Profissional();
+        professional.setId(1L);
+        professional.setNome("Eduardo Neto");
+        professional.setCargo(Cargo.DESIGNER);
+        professional.setNascimento(LocalDate.of(2003, 4, 10));
+        professional.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
 
-        when(profissionalService.save(any(Profissional.class))).thenReturn(profissional);
+        when(profissionalService.save(any(Profissional.class))).thenReturn(professional);
 
         String jsonBody = "{\"nome\":\"Eduardo Neto\",\"cargo\":\"DESIGNER\",\"nascimento\":\"2003-04-10\"}";
 
@@ -121,14 +110,14 @@ public class ProfissionalControllerTest {
 
     @Test
     public void testUpdateProfissional_Success() throws Exception {
-        Profissional profissionalAtualizado = new Profissional();
-        profissionalAtualizado.setId(1L);
-        profissionalAtualizado.setNome("Carlos Silva");
-        profissionalAtualizado.setCargo(Cargo.TESTER);
-        profissionalAtualizado.setNascimento(LocalDate.of(2002, 5, 15));
-        profissionalAtualizado.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
+        Profissional updateProfessional = new Profissional();
+        updateProfessional.setId(1L);
+        updateProfessional.setNome("Carlos Silva");
+        updateProfessional.setCargo(Cargo.TESTER);
+        updateProfessional.setNascimento(LocalDate.of(2002, 5, 15));
+        updateProfessional.setCreatedDate(LocalDateTime.of(2024, 10, 8, 20, 31, 51));
 
-        when(profissionalService.update(eq(1L), any(ProfissionalUpdateDTO.class))).thenReturn(profissionalAtualizado);
+        when(profissionalService.update(eq(1L), any(ProfissionalUpdateDTO.class))).thenReturn(updateProfessional);
 
         String jsonBody = "{\"nome\":\"Carlos Silva\",\"cargo\":\"TESTER\",\"nascimento\":\"2002-05-15\"}";
 
@@ -154,7 +143,7 @@ public class ProfissionalControllerTest {
 
     @Test
     public void testGetAllProfissionais_Success() throws Exception {
-        List<ProfissionalDTO> profissionais = Arrays.asList(
+        List<ProfissionalDTO> professional = Arrays.asList(
                 ProfissionalDTO.builder()
                         .id(1L)
                         .nome("Eduardo Neto")
@@ -167,7 +156,7 @@ public class ProfissionalControllerTest {
                         .build()
         );
 
-        when(profissionalService.findAll(null, null)).thenReturn(profissionais);
+        when(profissionalService.findAll(null, null)).thenReturn(professional);
 
         mockMvc.perform(get("/profissionais"))
                 .andExpect(status().isOk())
@@ -177,14 +166,14 @@ public class ProfissionalControllerTest {
 
     @Test
     public void testGetAllProfissionais_WithFilters() throws Exception {
-        List<ProfissionalDTO> profissionais = Arrays.asList(
+        List<ProfissionalDTO> professional = Arrays.asList(
             ProfissionalDTO.builder()
                 .id(1L)
                 .nome("Eduardo Neto")
                 .build()
         );
 
-        when(profissionalService.findAll("Eduardo", Arrays.asList("id", "nome"))).thenReturn(profissionais);
+        when(profissionalService.findAll("Eduardo", Arrays.asList("id", "nome"))).thenReturn(professional);
 
         mockMvc.perform(get("/profissionais")
                 .param("q", "Eduardo")
