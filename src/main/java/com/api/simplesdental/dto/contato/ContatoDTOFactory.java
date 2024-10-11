@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.api.simplesdental.dto.profissional.ProfissionalDTO;
 import com.api.simplesdental.dto.profissional.ProfissionalDTOFactory;
+import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.model.profissional.Profissional;
 
 public class ContatoDTOFactory {
@@ -32,6 +33,26 @@ public class ContatoDTOFactory {
                 );
                 builder.profissional(profissionalDTO);
             }
+        }
+
+        return builder.build();
+    }
+    
+    public static ContatoDTO createFromDTO(Contato contato) {
+        if (contato == null) {
+            return null;
+        }
+
+        ContatoDTO.ContatoDTOBuilder builder = ContatoDTO.builder();
+
+        builder.id(contato.getId());
+        builder.nome(contato.getNome());
+        builder.contato(contato.getContato());
+        builder.createdDate(contato.getCreatedDate());
+
+        if (contato.getProfissional() != null) {
+            ProfissionalDTO profissionalDTO = ProfissionalDTOFactory.createFromDTO(contato.getProfissional());
+            builder.profissional(profissionalDTO);
         }
 
         return builder.build();

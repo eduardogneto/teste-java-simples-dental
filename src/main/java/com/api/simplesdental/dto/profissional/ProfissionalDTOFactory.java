@@ -52,5 +52,21 @@ public class ProfissionalDTOFactory {
 
         return builder.build();
     }
+    
+    public static ProfissionalDTO createFromDTO(Profissional profissional) {
+        if (profissional == null) {
+            return null;
+        }
+
+        ProfissionalDTO.ProfissionalDTOBuilder builder = ProfissionalDTO.builder();
+
+        builder.id(profissional.getId());
+        builder.nome(profissional.getNome());
+        builder.cargo(profissional.getCargo());
+        builder.nascimento(profissional.getNascimento());
+        builder.createdDate(profissional.getCreatedDate());
+
+        return builder.build();
+    }
 }
 

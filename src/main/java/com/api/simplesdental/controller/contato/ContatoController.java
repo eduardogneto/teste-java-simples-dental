@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.simplesdental.dto.contato.ContatoDTO;
+import com.api.simplesdental.dto.contato.ContatoDTOFactory;
 import com.api.simplesdental.exception.ResourceNotFoundException;
 import com.api.simplesdental.model.contato.Contato;
 import com.api.simplesdental.service.contato.ContatoService;
@@ -40,12 +41,14 @@ public class ContatoController {
 
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar contato por ID de parametro")
-    public ResponseEntity<Contato> getContatoById(@PathVariable Long id) {
+    @Operation(summary = "Buscar contato por ID de parâmetro")
+    public ResponseEntity<ContatoDTO> getContatoById(@PathVariable Long id) {
         Contato contato = contatoService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com id " + id));
-        return ResponseEntity.ok(contato);
+        ContatoDTO contatoDTO = ContatoDTOFactory.createFromDTO(contato);
+        return ResponseEntity.ok(contatoDTO);
     }
+
 
     @PostMapping
     @Operation(summary = "Cadastrar novo contato")
